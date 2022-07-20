@@ -2,7 +2,7 @@
 
 This is a plugin for [Logstash](https://github.com/elastic/logstash).
 
-This filter is use as a internal process for redBorder platform..
+This filter is use as part as an internal process for redBorder platform..
 
 ## Documentation
 
