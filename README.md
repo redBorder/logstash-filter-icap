@@ -6,7 +6,7 @@ This filter is use as a internal process for redBorder platform..
 
 ## Documentation
 
-Add the redfish input in your Logstash pipeline as follow:
+Add the filter plugin in your Logstash pipeline as follow:
 
 ```sh
 filter {
