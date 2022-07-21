@@ -8,7 +8,7 @@ module AerospikeConfig
    servers = []
    if File.exist?(AEROSPIKE_CONFIG_FILE)
          production_config = YAML.load_file(AEROSPIKE_CONFIG_FILE)
-         servers = production_config["production"]["servers"]
+         servers = production_config["production"]["servers"] || []
    end
    servers.push("localhost:3000") if servers.empty?
    return servers
