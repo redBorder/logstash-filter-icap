@@ -4,7 +4,7 @@ require "manticore"
 require_relative "../util/malware_constant"
 
 class AerospikeStore
-  include MailgwConstant
+  include MalwareConstant
   include Aerospike
 
   attr_accessor :aerospike
