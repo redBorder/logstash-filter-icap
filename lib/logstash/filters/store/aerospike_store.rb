@@ -1,7 +1,7 @@
 # encoding: utf-8
 require "aerospike"
 require "manticore"
-require_relative "../util/mailgw_constant"
+require_relative "../util/malware_constant"
 
 class AerospikeStore
   include MailgwConstant
