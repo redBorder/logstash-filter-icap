@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "aerospike"
 require "manticore"
+require "json"
 require_relative "../util/malware_constant"
 
 class AerospikeStore
@@ -55,8 +56,8 @@ class AerospikeStore
 
     if (!src.nil? and !dst.nil?)
       
-      data_src = @aerospike.get(src_key) || {}
-      data_dst = @aerospike.get(dst_key) || {}
+      data_src = @aerospike.get(src_key).bins rescue {}
+      data_dst = @aerospike.get(dst_key).bins rescue {}
 
       score_src, score_dst = -1
 
@@ -83,11 +84,10 @@ class AerospikeStore
         params["process"] = "complete"
         params["ip"] = src
 
-        # TODO: check if this works 
-        Manticore.post(make_random_reputation_url, params: params)
+        Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
       end
 
-      if !data_dst.empty?
+      if !data_dst.nil?
         score_dst = data_dst[SCORE]
         data_dst.delete(SCORE)
         list_type_dst = data_dst[LIST_TYPE]
@@ -110,8 +110,7 @@ class AerospikeStore
         params["process"] =  "complete"
         params["ip"] = dst
 
-        # TODO: check if this works 
-        Manticore.post(make_random_reputation_url, params: params)
+        Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
       end
       
       score_src = -1 unless score_src
@@ -136,7 +135,7 @@ class AerospikeStore
       end
 
     elsif !src.nil?
-      data_src = @aerospike.get(src_key) || {}
+      data_src = @aerospike.get(src_key).bins rescue {}
 
       unless data_src.empty?
         score_src = data_src[SCORE]
@@ -173,8 +172,7 @@ class AerospikeStore
         params["process"] = "complete"
         params["ip"] = src
 
-         # TODO: check if this works 
-         Manticore.post(make_random_reputation_url, params: params)
+        Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
       end
 
       params = {}
@@ -182,12 +180,11 @@ class AerospikeStore
       params["process"] = "complete"
       params["ip"] = dst
 
-      # TODO: check if this works 
-      Manticore.post(make_random_reputation_url, params: params)
+      Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
 
     elsif !dst.nil?
-      data_dst = @aerospike.get(dst_key) || {}
-      score_dst = data_dst[SCORE]
+      data_dst = @aerospike.get(dst_key).bins rescue {}
+      score_dst = data_dst[SCORE] rescue nil
       data_dst.delete(SCORE)
       list_type_src = data_dst[LIST_TYPE]
       data_dst.delete(LIST_TYPE)
@@ -223,8 +220,7 @@ class AerospikeStore
         params["process"] = "complete"
         params["ip"] = dst
 
-        # TODO: check if this works 
-        Manticore.post(make_random_reputation_url, params: params)
+        Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
       end
     end
     
@@ -241,7 +237,7 @@ class AerospikeStore
     unless hash.nil?
       hash_key = Key.new(@namespace,"hashScores", hash) rescue nil
 
-      data_hash = @aerospike.get(hash_key) || {}
+      data_hash = @aerospike.get(hash_key).bins rescue {}
 
       unless data_hash.empty?
         list_type = data_hash[LIST_TYPE]
@@ -273,8 +269,7 @@ class AerospikeStore
         params["process"] = "complete"
         params["hash"] = hash
 
-         # TODO: check if this works 
-         Manticore.post(make_random_reputation_url, params: params)
+        Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
       end
     end
 
@@ -289,7 +284,7 @@ class AerospikeStore
     unless url.nil?
       url_key = Key.new(@namespace, "urlScores", url) rescue nil
 
-      url_hash = @aerospike.get(url_key) || {}
+      url_hash = @aerospike.get(url_key).bins rescue {}
 
       unless url_hash.empty?
         list_type = url_hash[LIST_TYPE]
@@ -318,8 +313,7 @@ class AerospikeStore
         params["process"] = "complete"
         params["url"] = url
 
-         # TODO: check if this works 
-         Manticore.post(make_random_reputation_url, params: params)
+        Manticore.post(make_random_reputation_url, body: params.to_json.to_s).body
       end
     end
 
