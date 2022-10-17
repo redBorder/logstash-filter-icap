@@ -31,12 +31,13 @@ class AerospikeStore
     unless data.nil?
       hash_times_key = Key.new(@namespace, type + "Times" , data) rescue nil
       data_times = {}
-      data_times[type] = data
 
-      if hash_times_key
+      record = @aerospike.get(hash_times_key,[],Policy.new)
+
+      if record.nil?
+        data_times["time_start"] = timestamp
         data_times["time_end"] = timestamp
       else
-        data_times["time_start"] = timestamp
         data_times["time_end"] = timestamp
       end
 
@@ -305,7 +306,7 @@ class AerospikeStore
         score = -1 unless score
         data["url_"+SCORE] = score
       else
-        data ["url_"+SCORE] = -1
+        data["url_"+SCORE] = -1
         data[LIST_TYPE] = "none"
 
         params = {}
